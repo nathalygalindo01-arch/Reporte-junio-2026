@@ -1,0 +1,678 @@
+
+<style>
+:root{--nv:#0d2340;--nvl:#1a3a5c;--nvm:#1e4976;--ms:#c8922a;--msl:#f0b942;--msp:#fdf3dc;--wh:#fff;--of:#f7f8fa;--gl:#e8edf3;--gm:#8a9ab0;--su:#1a7a4a;--da:#c0392b;--sub:#e8f7ef;--yt:#cc0000;--fb:#1877f2;--ig:#e1306c;--mc:#00b2ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,sans-serif;}
+.rw{background:var(--of);padding:0 0 40px;}
+.hdr{background:var(--nv);padding:20px 26px 16px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:4px solid var(--ms);}
+.hdr h1{color:#fff;font-size:18px;font-weight:500;}
+.hdr p{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;}
+.pill{background:var(--ms);color:var(--nv);font-size:11px;font-weight:500;padding:4px 11px;border-radius:20px;}
+.pill2{background:rgba(255,255,255,.12);color:rgba(255,255,255,.75);font-size:11px;padding:4px 10px;border-radius:20px;border:.5px solid rgba(255,255,255,.2);}
+.tabs{background:var(--nvl);display:flex;padding:0 26px;overflow-x:auto;scrollbar-width:none;}
+.tab{color:rgba(255,255,255,.48);font-size:11.5px;padding:10px 12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.tab.on{color:var(--msl);border-bottom-color:var(--msl);font-weight:500;}
+.sec{display:none;padding:20px 26px;}
+.sec.on{display:block;}
+.slbl{font-size:10px;font-weight:500;color:var(--ms);text-transform:uppercase;letter-spacing:1.1px;margin-bottom:4px;}
+.stit{font-size:16px;font-weight:500;color:var(--nv);margin-bottom:14px;}
+.note{background:var(--msp);border:.5px solid var(--ms);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--nv);line-height:1.5;margin-bottom:13px;}
+.note strong{color:var(--ms);}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:14px;}
+.kcard{background:var(--wh);border:.5px solid var(--gl);border-radius:12px;padding:13px;}
+.kcard.acc{border-left:3px solid var(--ms);}
+.klbl{font-size:11px;color:var(--gm);margin-bottom:5px;}
+.kval{font-size:20px;font-weight:500;color:var(--nv);}
+.kdelta{font-size:11px;margin-top:4px;}
+.up{color:var(--su);}.dn{color:var(--da);}
+/* universal editable style */
+[contenteditable="true"]{outline:none;border-bottom:1.5px dashed var(--ms);cursor:text;}
+[contenteditable="true"]:focus{background:var(--msp);border-radius:2px;padding:0 2px;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.card{background:var(--wh);border:.5px solid var(--gl);border-radius:12px;padding:16px;margin-bottom:12px;}
+.card:last-child{margin-bottom:0;}
+.ctit{font-size:13px;font-weight:500;color:var(--nv);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;}
+/* standard table */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:var(--nv);color:#fff;padding:7px 9px;text-align:left;font-weight:500;white-space:nowrap;}
+.tbl th:not(:first-child){text-align:right;}
+.tbl td{padding:7px 9px;border-bottom:.5px solid var(--gl);color:var(--nv);vertical-align:top;}
+.tbl td:not(:first-child){text-align:right;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:var(--of);}
+/* editable table — all td editable */
+.etbl{width:100%;border-collapse:collapse;font-size:12px;}
+.etbl th{background:var(--nv);color:#fff;padding:7px 9px;text-align:left;font-weight:500;white-space:nowrap;}
+.etbl th:not(:first-child){text-align:right;}
+.etbl td{padding:0;border-bottom:.5px solid var(--gl);color:var(--nv);}
+.etbl tr:last-child td{border-bottom:none;}
+.etbl tr:nth-child(even) td{background:var(--of);}
+.etbl td div{padding:7px 9px;outline:none;min-height:30px;width:100%;border-bottom:1.5px dashed var(--ms);cursor:text;text-align:right;}
+.etbl td:first-child div{text-align:left;}
+.etbl td div:focus{background:var(--msp);}
+.pos{color:var(--su);font-weight:500;}.neg{color:var(--da);font-weight:500;}.neu{color:var(--gm);}
+.bdg{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;}
+.bdg.ms{background:var(--msp);color:var(--ms);}.bdg.nv{background:#e6edf5;color:var(--nv);}
+.bl-sec{background:var(--wh);border:.5px solid var(--gl);border-radius:12px;padding:16px;margin-bottom:12px;}
+.bl{display:flex;gap:8px;padding:7px 0;border-bottom:.5px solid var(--gl);font-size:12.5px;line-height:1.5;}
+.bl:last-child{border-bottom:none;padding-bottom:0;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ms);flex-shrink:0;margin-top:5px;}
+.bed{outline:none;flex:1;color:var(--nv);}
+.bed:focus{background:var(--msp);border-radius:3px;padding:0 3px;}
+/* camp cards */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px;margin-bottom:14px;}
+.cc{background:var(--wh);border:.5px solid var(--gl);border-radius:12px;padding:13px;}
+.cc-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.cc-nm{font-size:12.5px;font-weight:500;color:var(--nv);line-height:1.3;padding-right:5px;}
+.cc-gl{font-size:9.5px;padding:2px 6px;border-radius:7px;font-weight:500;flex-shrink:0;}
+.gv{background:#e6edf5;color:var(--nv);}.gl2{background:var(--sub);color:var(--su);}.gp{background:var(--msp);color:var(--ms);}
+.cc-ad{font-size:10.5px;color:var(--gm);margin-bottom:7px;line-height:1.3;}
+.cc-plts{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.plt{display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:7px;}
+.plt-fb{background:#e8f0fe;color:var(--fb);}.plt-yt{background:#fdecea;color:var(--yt);}.plt-ig{background:#fce4ec;color:var(--ig);}.plt-pm{background:#f3e5f5;color:#6a1b9a;}
+.pd{width:5px;height:5px;border-radius:50%;}
+.cc-mt{display:flex;gap:10px;font-size:10.5px;color:var(--gm);border-top:.5px solid var(--gl);padding-top:6px;}
+.sbar{background:var(--nv);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-around;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.sb-v{font-size:16px;font-weight:500;color:var(--msl);text-align:center;}
+.sb-l{font-size:10px;color:rgba(255,255,255,.55);margin-top:1px;text-align:center;}
+.plthead{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:.5px solid var(--gl);}
+.pico{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.pico.fb{background:var(--fb);color:#fff;}.pico.yt{background:var(--yt);color:#fff;}
+.ptit{font-size:13px;font-weight:500;color:var(--nv);}
+.pbdg{font-size:11px;color:var(--gm);margin-left:auto;}
+/* budget */
+.bud-hero{background:var(--nv);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.bud-hero h2{color:var(--msl);font-size:16px;font-weight:500;margin-bottom:3px;}
+.bud-hero p{color:rgba(255,255,255,.6);font-size:12px;margin-bottom:14px;}
+.bud-row{display:flex;gap:10px;flex-wrap:wrap;}
+.bud-kpi{background:rgba(255,255,255,.08);border-radius:10px;padding:11px 14px;flex:1;min-width:110px;}
+.bv{font-size:19px;font-weight:500;color:#fff;}
+.bl2{font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;}
+.bd2{font-size:11px;margin-top:3px;}
+.bbar-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--gm);margin-bottom:3px;}
+.btrack{height:7px;background:var(--gl);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.bfill{height:100%;border-radius:4px;}
+.ns-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.nsc{background:var(--nv);border-radius:12px;padding:15px;}
+.nsc .n{color:var(--ms);font-size:16px;font-weight:500;margin-bottom:2px;}
+.nsc .t{color:#fff;font-size:12.5px;font-weight:500;margin-bottom:3px;}
+.nsc .d{color:rgba(255,255,255,.6);font-size:11.5px;line-height:1.5;}
+.ebar{background:var(--nv);display:flex;justify-content:flex-end;gap:8px;padding:10px 26px;border-top:1px solid var(--nvl);}
+.bta{background:var(--ms);color:var(--nv);font-size:11px;font-weight:500;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;}
+.btb{background:rgba(255,255,255,.12);color:#fff;font-size:11px;border:.5px solid rgba(255,255,255,.2);padding:7px 14px;border-radius:8px;cursor:pointer;}
+@media(max-width:600px){.r2,.ns-grid,.cgrid,.bud-row{grid-template-columns:1fr;flex-direction:column;}}
+</style>
+
+<div class="rw">
+<div class="hdr">
+  <div><h1>Reporte mensual · LRS 2026</h1><p>Mayo vs junio · todos los campos editables · haz clic en cualquier valor</p></div>
+  <div style="display:flex;gap:8px;align-items:center;"><span class="pill">May → Jun → Jul</span><span class="pill2">✏ Editable</span></div>
+</div>
+<div class="tabs">
+  <div class="tab on" onclick="st('camp')">0 · Campañas</div>
+  <div class="tab" onclick="st('demo')">A · Audiencia</div>
+  <div class="tab" onclick="st('cr')">B · CR & Ventas</div>
+  <div class="tab" onclick="st('yt')">C · YouTube</div>
+  <div class="tab" onclick="st('gads')">D · Google Ads</div>
+  <div class="tab" onclick="st('meta')">E · Meta Ads</div>
+  <div class="tab" onclick="st('insights')">F · Análisis</div>
+  <div class="tab" onclick="st('next')">G · Next Steps</div>
+  <div class="tab" onclick="st('budget')">H · Budget Julio</div>
+</div>
+
+<!-- 0: CAMPAÑAS — 11 activas (sin Manychat apagados) -->
+<div class="sec on" id="sec-camp">
+  <div class="slbl">Sección 0</div>
+  <div class="stit">Campañas activas — junio 2026</div>
+  <div class="sbar">
+    <div><div class="sb-v">11</div><div class="sb-l">Campañas activas</div></div>
+    <div><div class="sb-v">$11,510</div><div class="sb-l">Budget total</div></div>
+    <div><div class="sb-v">$5,950</div><div class="sb-l">Meta (FB / IG)</div></div>
+    <div><div class="sb-v">$5,560</div><div class="sb-l">Google (YT / PMax)</div></div>
+    <div><div class="sb-v">3 objetivos</div><div class="sb-l">Venta · Lead · Posicionamiento</div></div>
+  </div>
+
+  <div style="margin-bottom:14px;">
+    <div class="plthead"><div class="pico fb">f</div><div class="ptit">Meta Ads — Facebook & Instagram</div><span class="pbdg">$5,950 · 5 campañas activas</span></div>
+    <div class="cgrid">
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">WEB 10 — BOFU</div><span class="cc-gl gv">VENTA</span></div>
+        <div class="cc-ad">LRS - BOFU - CV LP Web 10 min CCPW HG 2025</div>
+        <div class="cc-plts"><span class="plt plt-fb"><span class="pd" style="background:var(--fb)"></span>Facebook</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$45/día · $1,350</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Masterclass CCPW 2026 — BOFU</div><span class="cc-gl gv">VENTA</span></div>
+        <div class="cc-ad">LRS-BOFU-CV-Masterclass CCPW HG 2026</div>
+        <div class="cc-plts"><span class="plt plt-fb"><span class="pd" style="background:var(--fb)"></span>Facebook · Desktop</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$40/día · $1,200</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Retargeting Membresía FB</div><span class="cc-gl gv">VENTA</span></div>
+        <div class="cc-ad">LRS - BOFU- RG- Membresia -FB-Nueva</div>
+        <div class="cc-plts"><span class="plt plt-fb"><span class="pd" style="background:var(--fb)"></span>Facebook · Desktop</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$60/día · $1,800</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Masterclass FB — Lead Gen</div><span class="cc-gl gl2">LEAD</span></div>
+        <div class="cc-ad">LRS - MOFU- LG- Masterclass HG 2025 -FB - Nuevo Opt</div>
+        <div class="cc-plts"><span class="plt plt-fb"><span class="pd" style="background:var(--fb)"></span>Facebook</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$25/día · $750</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Masterclass IG — Lead Gen</div><span class="cc-gl gl2">LEAD</span></div>
+        <div class="cc-ad">LRS - MOFU- LG- Masterclass HG 2025 -IG - Nueva Optimiz</div>
+        <div class="cc-plts"><span class="plt plt-ig"><span class="pd" style="background:var(--ig)"></span>Instagram</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$25/día · $750</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="plthead"><div class="pico yt">▶</div><div class="ptit">Google Ads — YouTube & Performance Max</div><span class="pbdg">$5,560 · 6 campañas</span></div>
+    <div class="cgrid">
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Curso HG Video Largo</div><span class="cc-gl gp">POSICIONAMIENTO</span></div>
+        <div class="cc-ad">00 07102025 Curso HG- Video Largo</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube · Desktop</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$30/día · $900</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Masterclass CCPW Posicionamiento</div><span class="cc-gl gp">POSICIONAMIENTO</span></div>
+        <div class="cc-ad">00 08032026 Masterclass CCPW- Posicionamiento video Largo</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube</span></div>
+        <div class="cc-mt"><span>COL-2 · USA-1 · PER-2 · MEX-2</span><span>$40/día · $1,200</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Promo Corta Masterclass</div><span class="cc-gl gp">POSICIONAMIENTO</span></div>
+        <div class="cc-ad">00 17022026 Promociones cortas Masterclass Ene 2026</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube · Desktop</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$30/día · $900</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">CCPW con IA en HG — Views</div><span class="cc-gl gp">POSICIONAMIENTO</span></div>
+        <div class="cc-ad">00 15042026 CCPW con IA en HG- Views</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube · Desktop</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$30/día · $900</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">CCPW Performance Max</div><span class="cc-gl gv">VENTA</span></div>
+        <div class="cc-ad">00 08102025 CCPW-PerformanceMax</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube</span><span class="plt plt-pm"><span class="pd" style="background:#6a1b9a"></span>PMax</span></div>
+        <div class="cc-mt"><span>Jun 1–30</span><span>$30/día · $900</span></div>
+      </div>
+      <div class="cc">
+        <div class="cc-hd"><div class="cc-nm">Retargeting Membresía PMax</div><span class="cc-gl gv">VENTA</span></div>
+        <div class="cc-ad">00 04062026 Promo Membresia 2026 HG-Retargeting-PMax</div>
+        <div class="cc-plts"><span class="plt plt-yt"><span class="pd" style="background:var(--yt)"></span>YouTube</span><span class="plt plt-pm"><span class="pd" style="background:#6a1b9a"></span>PMax</span></div>
+        <div class="cc-mt"><span>Jun 1 – Jun 4</span><span>$30/día · $760</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A: AUDIENCIA -->
+<div class="sec" id="sec-demo">
+  <div class="slbl">Sección A</div>
+  <div class="stit">Distribución demográfica — junio 2026</div>
+  <div class="note"><strong>Fuente:</strong> Meta Ads Manager + Google Ads → Demographics. Todos los valores son editables.</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ctit">Por edad</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:48px;color:var(--gm);">18–24</span><div style="flex:1;height:7px;background:var(--gl);border-radius:4px;overflow:hidden;"><div style="width:22%;height:100%;background:var(--nv);border-radius:4px;"></div></div><span style="width:34px;text-align:right;font-weight:500;" contenteditable="true">22%</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:48px;color:var(--gm);">25–34</span><div style="flex:1;height:7px;background:var(--gl);border-radius:4px;overflow:hidden;"><div style="width:38%;height:100%;background:var(--nv);border-radius:4px;"></div></div><span style="width:34px;text-align:right;font-weight:500;" contenteditable="true">38%</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:48px;color:var(--gm);">35–44</span><div style="flex:1;height:7px;background:var(--gl);border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:var(--nvm);border-radius:4px;"></div></div><span style="width:34px;text-align:right;font-weight:500;" contenteditable="true">25%</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:48px;color:var(--gm);">45–54</span><div style="flex:1;height:7px;background:var(--gl);border-radius:4px;overflow:hidden;"><div style="width:10%;height:100%;background:var(--nvm);border-radius:4px;"></div></div><span style="width:34px;text-align:right;font-weight:500;" contenteditable="true">10%</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:48px;color:var(--gm);">55+</span><div style="flex:1;height:7px;background:var(--gl);border-radius:4px;overflow:hidden;"><div style="width:5%;height:100%;background:var(--ms);border-radius:4px;"></div></div><span style="width:34px;text-align:right;font-weight:500;" contenteditable="true">5%</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctit">Por género</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;background:var(--msp);border:.5px solid var(--ms);border-radius:10px;padding:11px;text-align:center;"><div style="font-size:10px;color:var(--gm);margin-bottom:4px;">Mujeres</div><div style="font-size:18px;font-weight:500;color:var(--ms);" contenteditable="true">62%</div></div>
+        <div style="flex:1;background:var(--of);border:.5px solid var(--gl);border-radius:10px;padding:11px;text-align:center;"><div style="font-size:10px;color:var(--gm);margin-bottom:4px;">Hombres</div><div style="font-size:18px;font-weight:500;color:var(--nv);" contenteditable="true">36%</div></div>
+        <div style="flex:1;background:var(--of);border:.5px solid var(--gl);border-radius:10px;padding:11px;text-align:center;"><div style="font-size:10px;color:var(--gm);margin-bottom:4px;">Otro</div><div style="font-size:18px;font-weight:500;color:var(--nv);" contenteditable="true">2%</div></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--gm);line-height:1.6;" contenteditable="true">Segmento 25–34 lidera conversiones. Leads de Masterclass FB e IG muestran alta cobertura en Mobile y Desktop.</div>
+    </div>
+  </div>
+</div>
+
+<!-- B: CR & VENTAS — sin cuadro comparativo, con tabla editable debajo -->
+<div class="sec" id="sec-cr">
+  <div class="slbl">Sección B</div>
+  <div class="stit">CR Total · Ventas · Leads — junio 2026</div>
+  <div class="note"><strong>Todos los campos son editables.</strong> Datos de CR Total y Ventas provienen de Looker Studio — haz clic en cualquier celda para modificar.</div>
+  <div class="kgrid">
+    <div class="kcard acc">
+      <div class="klbl">CR Total junio</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);">Llenar desde Looker</div>
+    </div>
+    <div class="kcard acc">
+      <div class="klbl">Ventas junio</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">Llenar desde Looker</div>
+    </div>
+    <div class="kcard acc">
+      <div class="klbl">Leads junio (CSV)</div>
+      <div class="kval" contenteditable="true" style="display:block;">577</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">FB: 295 · IG: 282</div>
+    </div>
+    <div class="kcard">
+      <div class="klbl">Budget total junio</div>
+      <div class="kval" contenteditable="true" style="display:block;">$11,510</div>
+      <div class="kdelta dn">↓ vs mayo: $11,745</div>
+    </div>
+  </div>
+
+  <!-- Tabla editable estilo campañas -->
+  <div class="card">
+    <div class="ctit">Resultados junio 2026 <span class="bdg ms">todas las celdas editables</span></div>
+    <table class="etbl">
+      <thead><tr><th>Métrica</th><th>Mayo 2026</th><th>Junio 2026</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">CR Total (%)</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Ventas totales</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Leads Masterclass</div></td>
+          <td><div contenteditable="true">533</div></td>
+          <td><div contenteditable="true">577</div></td>
+          <td><div contenteditable="true" style="color:var(--su);font-weight:500;">+44 (+8%)</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">CR Main LP (%)</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Clicks totales</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Budget total</div></td>
+          <td><div contenteditable="true">$11,745</div></td>
+          <td><div contenteditable="true">$11,510</div></td>
+          <td><div contenteditable="true" style="color:var(--da);font-weight:500;">–$235</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- C: YOUTUBE — sin tabla estadísticas, solo KPIs editables -->
+<div class="sec" id="sec-yt">
+  <div class="slbl">Sección C</div>
+  <div class="stit">YouTube — mayo vs junio 2026</div>
+  <div class="note"><strong>Todos los campos son editables.</strong> Datos provienen de Looker Studio y YouTube Studio — haz clic para ingresar los valores reales.</div>
+  <div class="kgrid">
+    <div class="kcard acc">
+      <div class="klbl">Visitas orgánicas mayo</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">Desde Looker Studio</div>
+    </div>
+    <div class="kcard acc">
+      <div class="klbl">Visitas orgánicas junio</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">Desde Looker Studio</div>
+    </div>
+    <div class="kcard acc">
+      <div class="klbl">Nuevos suscriptores junio</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">Desde YouTube Studio</div>
+    </div>
+    <div class="kcard">
+      <div class="klbl">Ventas atribuidas YT</div>
+      <div class="kval" contenteditable="true" style="display:block;">—</div>
+      <div class="kdelta" style="color:var(--gm);font-size:11px;">Desde GA4</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctit">KPIs YouTube — mayo vs junio <span class="bdg ms">todas las celdas editables</span></div>
+    <table class="etbl">
+      <thead><tr><th>Métrica YT</th><th>Mayo 2026</th><th>Junio 2026</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr><td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Visitas orgánicas</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td></tr>
+        <tr><td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Nuevos suscriptores</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td></tr>
+        <tr><td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Ventas atribuidas YT</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td></tr>
+        <tr><td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">Watch time (hrs)</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td></tr>
+        <tr><td><div style="text-align:left;border-bottom:none;cursor:default;color:var(--gm);">CTR promedio (%)</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td><td><div contenteditable="true">—</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- D: GOOGLE ADS -->
+<div class="sec" id="sec-gads">
+  <div class="slbl">Sección D · Google Ads</div>
+  <div class="stit">Google Ads — mayo vs junio 2026</div>
+  <div class="note"><strong>Mayo Google:</strong> $5,600 · <strong>Junio Google:</strong> $5,560 (–$40). Posiciones del CSV — visitas orgánicas desde Looker Studio.</div>
+  <div class="kgrid">
+    <div class="kcard acc"><div class="klbl">Budget Google mayo</div><div class="kval">$5,600</div><div class="kdelta" style="color:var(--gm);">Daily ~$170</div></div>
+    <div class="kcard acc"><div class="klbl">Budget Google junio</div><div class="kval">$5,560</div><div class="kdelta dn">↓ –$40 vs mayo</div></div>
+    <div class="kcard acc"><div class="klbl">Visitas orgánicas mayo</div><div class="kval" contenteditable="true" style="display:block;">—</div><div class="kdelta" style="color:var(--gm);font-size:11px;">Desde Looker Studio</div></div>
+    <div class="kcard acc"><div class="klbl">Visitas orgánicas junio</div><div class="kval" contenteditable="true" style="display:block;">—</div><div class="kdelta" style="color:var(--gm);font-size:11px;">Desde Looker Studio</div></div>
+  </div>
+  <div class="card">
+    <div class="ctit">Posicionamiento YouTube — mayo vs junio <span class="bdg ms">posiciones del CSV</span></div>
+    <table class="etbl">
+      <thead><tr><th>Campaña</th><th>Posición mayo</th><th>Posición junio</th><th>Visitas mayo</th><th>Visitas junio</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;">Masterclass CCPW</div></td>
+          <td><div contenteditable="true">COL-4 / MEX-4 / PER-3 / USA-3</div></td>
+          <td><div contenteditable="true">COL-2 / USA-1 / PER-2 / MEX-2</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;">CCPW con IA — Views</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;">Curso HG Video Largo</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;">Promo Corta Masterclass</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+        <tr>
+          <td><div style="text-align:left;border-bottom:none;cursor:default;font-weight:500;">Total</div></td>
+          <td><div style="border-bottom:none;cursor:default;"></div></td>
+          <td><div style="border-bottom:none;cursor:default;"></div></td>
+          <td><div contenteditable="true"><strong>—</strong></div></td>
+          <td><div contenteditable="true"><strong>—</strong></div></td>
+          <td><div contenteditable="true">—</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ctit">Comparativo budget Google — mayo vs junio</div>
+    <table class="tbl">
+      <thead><tr><th>Campaña</th><th>Budget mayo</th><th>Budget junio</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr><td>Curso HG Video Largo</td><td>$930</td><td>$900</td><td class="neg">–$30</td></tr>
+        <tr><td>Masterclass CCPW Posicionamiento</td><td>$1,240</td><td>$1,200</td><td class="neg">–$40</td></tr>
+        <tr><td>Promo Corta Masterclass</td><td>$930</td><td>$900</td><td class="neg">–$30</td></tr>
+        <tr><td>CCPW con IA — Views</td><td>$600</td><td>$900</td><td class="pos">+$300</td></tr>
+        <tr><td>CCPW Performance Max</td><td>$930</td><td>$900</td><td class="neg">–$30</td></tr>
+        <tr><td>Retargeting Membresía PMax</td><td>$930</td><td>$760</td><td class="neg">–$170</td></tr>
+        <tr><td>Retargeting YT 2025 (pausado)</td><td>$40</td><td style="color:var(--da);">$0</td><td class="neg">–$40</td></tr>
+        <tr><td><strong>Total Google</strong></td><td><strong>$5,600</strong></td><td><strong>$5,560</strong></td><td class="neg"><strong>–$40</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="bl-sec">
+    <div class="ctit" style="margin-bottom:9px;">Análisis campañas Google</div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Masterclass CCPW mejoró posición en todos los países (COL 4→2, MEX 4→2, PER 3→2, USA 3→1) — mayor relevancia del contenido en buscadores de YouTube.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">CCPW con IA subió budget +$300 en junio. Verificar si esto se tradujo en mejor posición y más visitas al ingresar datos de Looker.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">PMax Membresía bajó $170 sin conversiones confirmadas en el CSV. Auditar señales de GA4 antes de continuar en julio.</div></div>
+  </div>
+</div>
+
+<!-- E: META ADS — tabla con columnas limpias y todas las celdas editables -->
+<div class="sec" id="sec-meta">
+  <div class="slbl">Sección E · Meta Ads</div>
+  <div class="stit">Meta Ads — mayo vs junio 2026</div>
+  <div class="note"><strong>Mayo Meta:</strong> $6,145 · <strong>Junio Meta:</strong> $5,950 (–$195). Todas las celdas de la tabla son editables — haz clic para ingresar los valores reales.</div>
+  <div class="kgrid">
+    <div class="kcard acc"><div class="klbl">Ventas Meta mayo</div><div class="kval" contenteditable="true" style="display:block;">—</div><div class="kdelta" style="color:var(--gm);font-size:11px;">Llenar desde Looker</div></div>
+    <div class="kcard acc"><div class="klbl">Ventas Meta junio</div><div class="kval" contenteditable="true" style="display:block;">—</div><div class="kdelta" style="color:var(--gm);font-size:11px;">Llenar desde Looker</div></div>
+    <div class="kcard acc"><div class="klbl">Leads mayo (CSV)</div><div class="kval" contenteditable="true" style="display:block;">533</div><div class="kdelta" style="color:var(--gm);font-size:11px;">FB: 296 · IG: 237</div></div>
+    <div class="kcard acc"><div class="klbl">Leads junio (CSV)</div><div class="kval" contenteditable="true" style="display:block;">577</div><div class="kdelta up">↑ +44 (+8%) vs mayo</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Meta Ads — mayo vs junio 2026 <span class="bdg ms">todas las celdas editables</span></div>
+    <div style="overflow-x:auto;">
+      <table class="etbl" style="min-width:520px;">
+        <thead>
+          <tr>
+            <th style="min-width:160px;">Campaña</th>
+            <th>Ventas mayo</th>
+            <th>Ventas junio</th>
+            <th>Leads mayo</th>
+            <th>Leads junio</th>
+            <th>CPR mayo</th>
+            <th>CPR junio</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;">WEB 10 — BOFU</div></td>
+            <td><div contenteditable="true">2</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+          </tr>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;">Masterclass CCPW</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+          </tr>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;">Retargeting Membresía</div></td>
+            <td><div contenteditable="true">61</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+          </tr>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;">Masterclass FB Leads</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">296</div></td>
+            <td><div contenteditable="true">295</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true" style="color:var(--da);">–1</div></td>
+          </tr>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;">Masterclass IG Leads</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">237</div></td>
+            <td><div contenteditable="true">282</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true">—</div></td>
+            <td><div contenteditable="true" style="color:var(--su);">+45</div></td>
+          </tr>
+          <tr>
+            <td><div style="text-align:left;border-bottom:none;cursor:default;font-weight:500;">TOTAL</div></td>
+            <td><div contenteditable="true"><strong>—</strong></div></td>
+            <td><div contenteditable="true"><strong>—</strong></div></td>
+            <td><div contenteditable="true"><strong>533</strong></div></td>
+            <td><div contenteditable="true"><strong>577</strong></div></td>
+            <td><div contenteditable="true"><strong>—</strong></div></td>
+            <td><div contenteditable="true"><strong>—</strong></div></td>
+            <td><div contenteditable="true"><strong>—</strong></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="bl-sec" style="margin-bottom:12px;">
+    <div class="ctit" style="margin-bottom:9px;">Análisis Meta Ads</div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Retargeting Membresía: en mayo generó 61 ventas. Si el dato de junio bajó con presupuesto similar ($1,860 vs $1,800), es señal de saturación de audiencia, no de presupuesto.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Masterclass IG fue la gran ganadora: 282 leads (+45 vs mayo) con $25 menos de inversión. CPL bajó de ~$3.27 a ~$2.66.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">WEB 10 pasó de 2 ventas en mayo a dato por confirmar en junio. Si fue 1 o menos, el CPV se duplicó y requiere reestructura urgente.</div></div>
+  </div>
+  <div class="card">
+    <div class="ctit">Mejores ads Meta <span class="bdg ms">análisis creativo</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+      <div style="border:.5px solid var(--gl);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--nv);padding:9px 12px;"><div style="color:var(--msl);font-weight:500;margin-bottom:2px;">Retargeting Membresía FB</div><div style="color:rgba(255,255,255,.55);font-size:10px;">BOFU · Facebook Desktop</div></div>
+        <div style="padding:12px;"><div style="color:var(--gm);font-size:11px;margin-bottom:5px;" contenteditable="true">Métricas junio: $ · CPV · conversiones</div><div style="line-height:1.5;color:var(--nv);" contenteditable="true">Audiencia de retargeting caliente con oferta de membresía gratuita. Reduce fricción. Si el CPV subió vs mayo, refrescar creativos o expandir público fuente.</div></div>
+      </div>
+      <div style="border:.5px solid var(--gl);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--nvl);padding:9px 12px;"><div style="color:var(--msl);font-weight:500;margin-bottom:2px;">Masterclass IG — Lead Gen</div><div style="color:rgba(255,255,255,.55);font-size:10px;">MOFU · Instagram</div></div>
+        <div style="padding:12px;"><div style="color:var(--gm);font-size:11px;margin-bottom:5px;">282 leads · $750 · CPL ~$2.66</div><div style="line-height:1.5;color:var(--nv);" contenteditable="true">Mejor eficiencia mes a mes: +45 leads con $25 menos. El formato IG está ganando terreno — candidato a escalar en julio.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- F: ANÁLISIS -->
+<div class="sec" id="sec-insights">
+  <div class="slbl">Sección F</div>
+  <div class="stit">Análisis de resultados — junio vs mayo 2026</div>
+  <div class="bl-sec">
+    <div class="ctit" style="margin-bottom:10px;">7 puntos directos <span class="bdg nv">Para CMO / Manager</span></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">1. Los leads subieron 8% (533 → 577) con Masterclass IG como ganadora: +45 leads con $25 menos de inversión. CPL mejoró de $3.27 a $2.66.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">2. Las ventas de Meta deben confirmarse desde Looker. El CSV muestra que Retargeting Membresía bajó desde 61 ventas en mayo con solo $60 menos de presupuesto — apunta a saturación de audiencia.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">3. YouTube Posicionamiento mejoró ranking en los 4 países de Masterclass CCPW (COL 4→2, MEX 4→2, PER 3→2, USA 3→1). Las visitas reales deben confirmarse desde Looker Studio.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">4. CCPW con IA aumentó budget +$300 (de $600 a $900). Su impacto en visitas orgánicas debe medirse desde Looker para validar si el incremento fue eficiente.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">5. Pipeline acumulado: 533 leads (mayo) + 577 (junio) = 1,110 leads listos para nurturing. Activar secuencia email + Manychat para convertir en julio–agosto.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">6. Budget total bajó $235 en junio. El recorte afectó más a BOFU (Retargeting) que a MOFU — Masterclass IG mejoró sin más inversión.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">7. Para julio: refrescar creativos de Retargeting, escalar Masterclass IG, completar datos de Looker y activar nurturing para los 1,110 leads acumulados.</div></div>
+  </div>
+  <div class="card">
+    <div class="ctit">Resumen ejecutivo</div>
+    <div style="font-size:13px;line-height:1.7;color:var(--nv);" contenteditable="true">Junio 2026: LRS ejecutó 11 campañas activas con $11,510 de inversión. Los leads subieron 8% vs mayo (577 vs 533), liderados por Masterclass IG. Las ventas y visitas orgánicas de YouTube deben confirmarse desde Looker Studio. Masterclass CCPW mejoró posicionamiento en 4 mercados clave. Para julio, el budget baja a $11,225 redistribuyendo hacia Google (+$160) sobre Meta (–$445).</div>
+  </div>
+</div>
+
+<!-- G: NEXT STEPS -->
+<div class="sec" id="sec-next">
+  <div class="slbl">Sección G</div>
+  <div class="stit">Next steps — julio 2026</div>
+  <div class="ns-grid">
+    <div class="nsc"><div class="n">01</div><div class="t" contenteditable="true">Llenar datos de Looker Studio</div><div class="d" contenteditable="true">Completar CR Total, ventas reales y visitas orgánicas YT en secciones B, C y D antes de presentar el reporte.</div></div>
+    <div class="nsc"><div class="n">02</div><div class="t" contenteditable="true">Refrescar creativos Retargeting</div><div class="d" contenteditable="true">Bajó de 61 ventas en mayo. Con presupuesto casi igual, la caída apunta a saturación. Nuevos creativos + posible expansión de LAL antes de agosto.</div></div>
+    <div class="nsc"><div class="n">03</div><div class="t" contenteditable="true">Escalar Masterclass IG</div><div class="d" contenteditable="true">Mejor CPL del mes ($2.66 vs $3.27 mayo). Budget sube a $775 en julio — evaluar si se puede llevar a $1,000+ si el CPL se mantiene.</div></div>
+    <div class="nsc"><div class="n">04</div><div class="t" contenteditable="true">Reestructurar WEB 10</div><div class="d" contenteditable="true">2 ventas en mayo, dato pendiente en junio. Si bajó a 1 o menos, CPV superó $1,000. Definir KPI mínimo y cambiar creativo o landing.</div></div>
+    <div class="nsc"><div class="n">05</div><div class="t" contenteditable="true">Activar nurturing 1,110 leads</div><div class="d" contenteditable="true">533 de mayo + 577 de junio. Secuencia email + Manychat con CTA Hostinger para convertir en julio–agosto.</div></div>
+    <div class="nsc"><div class="n">06</div><div class="t" contenteditable="true">Auditar PMax Membresía</div><div class="d" contenteditable="true">Sin conversiones confirmadas en el CSV de junio. Verificar eventos GA4 y pixel antes de continuar en agosto.</div></div>
+  </div>
+</div>
+
+<!-- H: BUDGET JULIO -->
+<div class="sec" id="sec-budget">
+  <div class="slbl">Sección H</div>
+  <div class="stit">Budget julio 2026 — distribución y comparativo</div>
+  <div class="bud-hero">
+    <h2>$11,225 — Budget planificado julio 2026</h2>
+    <p>vs $11,510 en junio (–$285) · vs $11,745 en mayo (–$520)</p>
+    <div class="bud-row">
+      <div class="bud-kpi"><div class="bl2">Meta julio</div><div class="bv">$5,505</div><div class="bd2 dn" style="color:#f0a0a0;">↓ vs jun –$445</div></div>
+      <div class="bud-kpi"><div class="bl2">Google julio</div><div class="bv">$5,720</div><div class="bd2 up" style="color:#6fdfaa;">↑ vs jun +$160</div></div>
+      <div class="bud-kpi"><div class="bl2">% Meta / Google</div><div class="bv">49% / 51%</div><div class="bd2" style="color:rgba(255,255,255,.5);">jun fue 52% / 48%</div></div>
+      <div class="bud-kpi"><div class="bl2">Campañas activas</div><div class="bv">9</div><div class="bd2" style="color:rgba(255,255,255,.5);">sin Manychat</div></div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ctit">Por plataforma — 3 meses</div>
+      <div style="margin-bottom:8px;">
+        <div class="bbar-lbl"><span style="color:var(--fb);font-weight:500;">Meta Ads</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px;color:var(--gm);"><span style="width:28px;">May</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:52%;background:var(--fb);"></div></div><span>$6,145</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px;color:var(--gm);"><span style="width:28px;">Jun</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:50%;background:var(--fb);opacity:.65;"></div></div><span>$5,950</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:11px;color:var(--gm);"><span style="width:28px;">Jul</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:46%;background:var(--fb);opacity:.4;"></div></div><span>$5,505</span></div>
+        <div class="bbar-lbl"><span style="color:#4285f4;font-weight:500;">Google Ads</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px;color:var(--gm);"><span style="width:28px;">May</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:48%;background:#4285f4;"></div></div><span>$5,600</span></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px;color:var(--gm);"><span style="width:28px;">Jun</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:47%;background:#4285f4;opacity:.65;"></div></div><span>$5,560</span></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gm);"><span style="width:28px;">Jul</span><div class="btrack" style="flex:1;margin-bottom:0;"><div class="bfill" style="width:48%;background:#4285f4;opacity:.4;"></div></div><span>$5,720</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctit">Por objetivo — julio 2026</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <div><div class="bbar-lbl"><span>Conversión / Venta</span><span style="font-weight:500;color:var(--nv);">$4,950 · 44%</span></div><div class="btrack"><div class="bfill" style="width:44%;background:var(--nv);"></div></div></div>
+        <div><div class="bbar-lbl"><span>Posicionamiento YT</span><span style="font-weight:500;color:var(--nv);">$4,030 · 36%</span></div><div class="btrack"><div class="bfill" style="width:36%;background:var(--yt);"></div></div></div>
+        <div><div class="bbar-lbl"><span>Lead Generation</span><span style="font-weight:500;color:var(--nv);">$1,550 · 14%</span></div><div class="btrack"><div class="bfill" style="width:14%;background:var(--su);"></div></div></div>
+        <div><div class="bbar-lbl"><span>PMax / Retargeting YT</span><span style="font-weight:500;color:var(--nv);">$695 · 6%</span></div><div class="btrack"><div class="bfill" style="width:6%;background:var(--ms);"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctit">Detalle campaña a campaña — mayo · junio · julio</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:520px;">
+        <thead><tr><th>Campaña</th><th>Plataforma</th><th>Mayo</th><th>Junio</th><th>Julio</th><th>Δ Jun→Jul</th></tr></thead>
+        <tbody>
+          <tr><td colspan="6" style="background:var(--of);color:var(--fb);font-size:10px;font-weight:500;padding:5px 9px;">META ADS</td></tr>
+          <tr><td>WEB 10 — BOFU</td><td style="color:var(--fb);font-size:11px;">Facebook</td><td>$1,395</td><td>$1,350</td><td>$1,395</td><td class="pos">+$45</td></tr>
+          <tr><td>Masterclass CCPW 2026</td><td style="color:var(--fb);font-size:11px;">Facebook</td><td>$1,240</td><td>$1,200</td><td>$1,240</td><td class="pos">+$40</td></tr>
+          <tr><td>Retargeting Membresía FB</td><td style="color:var(--fb);font-size:11px;">Facebook</td><td>$1,860</td><td>$1,800</td><td>$1,320</td><td class="neg">–$480</td></tr>
+          <tr><td>Masterclass FB — Leads</td><td style="color:var(--fb);font-size:11px;">Facebook</td><td>$775</td><td>$750</td><td>$775</td><td class="pos">+$25</td></tr>
+          <tr><td>Masterclass IG — Leads</td><td style="color:var(--ig);font-size:11px;">Instagram</td><td>$775</td><td>$750</td><td>$775</td><td class="pos">+$25</td></tr>
+          <tr><td>Manychat (pausado)</td><td style="color:var(--mc);font-size:11px;">Manychat</td><td>$100</td><td>$100</td><td style="color:var(--da);">$0</td><td class="neg">–$100</td></tr>
+          <tr><td style="font-weight:500;">Subtotal Meta</td><td></td><td style="font-weight:500;">$6,145</td><td style="font-weight:500;">$5,950</td><td style="font-weight:500;">$5,505</td><td class="neg">–$445</td></tr>
+          <tr><td colspan="6" style="background:var(--of);color:#4285f4;font-size:10px;font-weight:500;padding:5px 9px;">GOOGLE ADS</td></tr>
+          <tr><td>Curso HG Video Largo</td><td style="color:var(--yt);font-size:11px;">YouTube</td><td>$930</td><td>$900</td><td>$660</td><td class="neg">–$240</td></tr>
+          <tr><td>Masterclass CCPW Pos.</td><td style="color:var(--yt);font-size:11px;">YouTube</td><td>$1,240</td><td>$1,200</td><td>$1,240</td><td class="pos">+$40</td></tr>
+          <tr><td>Promo Corta Masterclass</td><td style="color:var(--yt);font-size:11px;">YouTube</td><td>$930</td><td>$900</td><td>$930</td><td class="pos">+$30</td></tr>
+          <tr><td>CCPW con IA — Views</td><td style="color:var(--yt);font-size:11px;">YouTube</td><td>$600</td><td>$900</td><td>$1,200</td><td class="pos">+$300</td></tr>
+          <tr><td>CCPW Performance Max</td><td style="color:#6a1b9a;font-size:11px;">PMax</td><td>$930</td><td>$900</td><td>$930</td><td class="pos">+$30</td></tr>
+          <tr><td>Retargeting Membresía PMax</td><td style="color:#6a1b9a;font-size:11px;">PMax</td><td>$930</td><td>$760</td><td>$760</td><td class="neu">$0</td></tr>
+          <tr><td style="font-weight:500;">Subtotal Google</td><td></td><td style="font-weight:500;">$5,600</td><td style="font-weight:500;">$5,560</td><td style="font-weight:500;">$5,720</td><td class="pos">+$160</td></tr>
+          <tr><td style="font-weight:500;font-size:13px;">TOTAL</td><td></td><td style="font-weight:500;">$11,745</td><td style="font-weight:500;">$11,510</td><td style="font-weight:500;">$11,225</td><td class="neg">–$285</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="bl-sec">
+    <div class="ctit" style="margin-bottom:9px;">Decisiones de budget destacadas</div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Retargeting Membresía FB baja $480 (de $1,800 a $1,320) — campaña con mayor caída de rendimiento. Monitorear si la reducción agrava la caída o si el refresco de creativos la recupera.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">CCPW con IA sube por tercer mes consecutivo: $600→$900→$1,200. Verificar que el ROI de visitas orgánicas justifique el incremento acumulado de $600.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Manychat se desactiva completamente ($100→$0). Evaluar si los leads de IG orgánico cubren ese volumen o si hay brecha en el funnel MOFU.</div></div>
+    <div class="bl"><div class="dot"></div><div class="bed" contenteditable="true">Curso HG Video Largo baja $240 (de $900 a $660) — única campaña YT que recorta. Posible bajo retorno de visitas orgánicas en datos internos.</div></div>
+  </div>
+</div>
+
+<div class="ebar">
+  <button class="btb" onclick="sendPrompt('Analiza los resultados de mayo vs junio 2026 de LRS: leads +8% (533→577), ventas de Meta a confirmar desde Looker, posicionamiento YT mejoró en 4 países. Budget mayo $11,745 vs junio $11,510. Dame recomendaciones para julio. ↗')">Pedir análisis a Claude ↗</button>
+  <button class="bta" onclick="window.print()">Exportar / Imprimir</button>
+</div>
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>
